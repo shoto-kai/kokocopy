@@ -21,12 +21,6 @@ function createHighlight(highlights: Highlight[], newStartLine: number, newStart
         let startChar = highlight.start.character;
         let endLine = highlight.end.line;
         let endChar = highlight.end.character;
-		// let changedHighlight: Highlight = {
-		// 	start: {line: startLine, character: startChar},
-		// 	end: {line: endLine, character: endChar},
-		// };
-		// highlights.splice(i, 1, changedHighlight);
-		// continue;
 
 		let newTextHeight = newEndLine - newStartLine;
 		if(startLine == endLine && startLine == newStartLine) {
@@ -247,19 +241,65 @@ function detectInputLanguage(inputString: string): string {
 	}
 }
 
+// function getRandomColorCode(): string {
+// 	const letters = "0123456789ABCDEF";
+// 	let colorCode = "#";
+
+// 	for (let i = 0; i < 6; i++) {
+// 	  colorCode += letters[Math.floor(Math.random() * 16)];
+// 	}
+
+// 	return colorCode;
+// }
+
+const highlightDecoration = vscode.window.createTextEditorDecorationType({
+	backgroundColor: "#C7B2D6"
+});
+
 export function activate(context: vscode.ExtensionContext) {
+	const editor = vscode.window.activeTextEditor;
+
+	let isButtonActive = false;
+
+    let myCommandId = 'myExtension.toggleMyCommand';
+
+    // ステータスバーにボタンを追加
+    let myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    myStatusBarItem.command = myCommandId;
+    myStatusBarItem.text = 'コピペを隠す';
+    myStatusBarItem.tooltip = 'コピペされたコードの表示・非表示を切り替えます';
+    myStatusBarItem.show();
+    context.subscriptions.push(myStatusBarItem);
+
+    // コマンドの登録
+    let disposable = vscode.commands.registerCommand(myCommandId, () => {
+		if(editor) {
+			// ボタンがクリックされたときの処理
+			isButtonActive = !isButtonActive; // ボタンの状態を反転させる
+			if(isButtonActive){
+				myStatusBarItem.text = "ここコピー！";
+				vscode.window.showInformationMessage("コピペを隠しました");
+				editor.setDecorations(highlightDecoration, []);
+			} else {
+				myStatusBarItem.text = "コピペを隠す";
+				vscode.window.showInformationMessage("ここコピーです！！");
+				editor.setDecorations(highlightDecoration, []);
+				decorate(editor,highlightDecoration, highlights);
+			}
+		}
+    });
+
+    context.subscriptions.push(disposable);
+
 	console.log("読み込み完了");
 
-	const highlightDecoration = vscode.window.createTextEditorDecorationType({
-		backgroundColor: "yellow",
-	});
-
 	vscode.workspace.onDidChangeTextDocument((event) => {
-		const editor = vscode.window.activeTextEditor;
-		
 		// 現在アクティブなエディタが存在し、そのドキュメントが変更されたものと一致する場合にのみ処理を進める。
 		if (editor && editor.document === event.document) {
 			let changes = event.contentChanges;
+
+			
+			
 
 			for (const change of changes) {
 				if (
