@@ -8,8 +8,10 @@ data = {
 response = requests.post(url, data=data)
 
 if response.status_code == 200:
-    total = response.text
-    print("Total number:", total)
+    text = response.text
+    copy_num, type_num = text.split(',')
+    print("Copy num:", copy_num)
+    print("Type num:", type_num)
 else:
     print("Error: " + str(response))
-    print('Failed to retrieve the total number.')
+    print('Failed to retrieve the number.')
