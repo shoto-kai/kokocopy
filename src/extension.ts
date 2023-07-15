@@ -241,16 +241,35 @@ function detectInputLanguage(inputString: string): string {
 	}
 }
 
-// function getRandomColorCode(): string {
-// 	const letters = "0123456789ABCDEF";
-// 	let colorCode = "#";
+function createLogFile(copyTextLength: number, typeTextLength: number) {
+	const fileName = "kokocopy.log";
+	const filePath = path.join(vscode.workspace.rootPath || "", fileName);
 
-// 	for (let i = 0; i < 6; i++) {
-// 	  colorCode += letters[Math.floor(Math.random() * 16)];
-// 	}
+	const newText = '0 0\n'; // 追記するテキスト
 
-// 	return colorCode;
-// }
+	// ファイルが存在しない場合は作成し、テキストを書き込む
+	if (!fs.existsSync(filePath)) {
+		fs.writeFileSync(filePath, newText);
+		console.log('The file was created and the text was written.');
+	} else {
+		// ファイルが存在する場合は、1行目のテキストを取得
+		const fileContent = fs.readFileSync(filePath, 'utf-8');
+		const lines = fileContent.split('\n');
+
+		const [pre1, pre2] = lines[0].split(' '); // ' '（空白）で文字列を分割して配列にする
+		const copyCounts = parseInt(pre1); // parseInt関数を使って文字列を整数に変換
+		const typeCounts = parseInt(pre2); // 同上
+
+		
+		// // 配列の最初の要素（1行目）を新しいテキストで上書き
+		lines[0] = `${copyCounts+copyTextLength} ${typeCounts+typeTextLength}`;
+		// // 配列を再び文字列に変換
+		const newContent = lines.join('\n');
+		// // 文字列をファイルに書き戻す
+		fs.writeFileSync(filePath, newContent);
+	}
+	
+}
 
 const highlightDecoration = vscode.window.createTextEditorDecorationType({
 	backgroundColor: "#C7B2D6"
@@ -297,15 +316,12 @@ export function activate(context: vscode.ExtensionContext) {
 		// 現在アクティブなエディタが存在し、そのドキュメントが変更されたものと一致する場合にのみ処理を進める。
 		if (editor && editor.document === event.document) {
 			let changes = event.contentChanges;
-
-			
-			
-
-			for (const change of changes) {
-				if (
-					changes[0].text.length > 1 &&
-					detectInputLanguage(change.text) === "NotJapanese"
-				) {
+			if (
+				changes[0].text.length > 1 &&
+				detectInputLanguage(changes[0].text) === "NotJapanese"
+			) {
+				createLogFile(changes[0].text.length, 0); // タイプした文字数をカウント
+				for (const change of changes) {
 					const start = change.range.start;
 
 					// addedTextLinesには追加されたテキストを改行で分割したものが格納される
@@ -319,36 +335,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 					createHighlight(highlights, start.line,start.character,endLine,endChar);
 					console.log("これっっっ",highlights);
-
-					// const fileName = "example.json";
-					// const filePath = path.join(vscode.workspace.rootPath || "", fileName);
-
-					// // 書き込む内容を指定します
-					// const jsonData = {
-					// 	start: {
-					// 		line: start.line,
-					// 		character: start.character
-					// 	},
-					// 	end: {
-					// 		line: endLine,
-					// 		character: endChar
-					// 	}
-					// };
-
-					// const content = JSON.stringify(jsonData, null, 2);
-
-					// // ファイルを書き込みモードでオープンします
-					// fs.writeFile(filePath, content, (err) => {
-					// 	if (err) {
-					// 		vscode.window.showErrorMessage("Failed to create text file.");
-					// 	} else {
-					// 		vscode.window.showInformationMessage(
-					// 			"Text file created successfully."
-					// 		);
-					// 	}
-					// });
-
-				} else if(changes[0].text.length != 0) {
+				}
+			} else if(changes[0].text.length != 0) {
+				createLogFile(0, 1); // タイプした文字数をカウント
+				for (const change of changes) {
 					if(changes[0].text=="\n"){
 						pressEnterKey(highlights, change.range.start.line, change.range.start.character);
 					} else {
