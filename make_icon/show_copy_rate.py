@@ -1,6 +1,3 @@
-import sys
-sys.path.append('/Users/sawanorei/opt/anaconda3/lib/python3.8/site-packages')
-
 from PIL import Image, ImageDraw, ImageFont
 
 # kokocopy.log からデータを読み込む
