@@ -259,7 +259,6 @@ function createLogFile(copyTextLength: number, typeTextLength: number) {
 		const [pre1, pre2] = lines[0].split(' '); // ' '（空白）で文字列を分割して配列にする
 		const copyCounts = parseInt(pre1); // parseInt関数を使って文字列を整数に変換
 		const typeCounts = parseInt(pre2); // 同上
-
 		
 		// // 配列の最初の要素（1行目）を新しいテキストで上書き
 		lines[0] = `${copyCounts+copyTextLength} ${typeCounts+typeTextLength}`;
@@ -276,7 +275,16 @@ const highlightDecoration = vscode.window.createTextEditorDecorationType({
 });
 
 export function activate(context: vscode.ExtensionContext) {
-	const editor = vscode.window.activeTextEditor;
+	let editor = vscode.window.activeTextEditor;
+
+	vscode.window.onDidChangeActiveTextEditor(newEditor => {
+        if (newEditor) {
+			editor = newEditor;
+			let document = newEditor.document;
+			console.log(document.uri.fsPath);
+            console.log(`Active editor changed. New active file is ${newEditor.document.uri.fsPath}`);
+        }
+    });
 
 	let isButtonActive = false;
 
