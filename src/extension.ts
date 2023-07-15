@@ -189,6 +189,37 @@ function editHighlight(highlights: Highlight[], editedLine: number, editedCharac
     }
 }
 
+function pressEnterKey(highlights: Highlight[], enterLine: number, enterChar: number) {
+	for (let i = highlights.length - 1; i >= 0; i--) {
+        let highlight = highlights[i];
+        let startLine = highlight.start.line;
+        let startChar = highlight.start.character;
+        let endLine = highlight.end.line;
+        let endChar = highlight.end.character;
+
+		if(startLine > enterLine || (startLine == enterLine && startChar >= enterChar)) {
+			let changedHighlight: Highlight = {
+				start: {line: startLine + 1, character: startChar},
+				end: {line: endLine + 1, character: endChar},
+			};
+			highlights.splice(i, 1, changedHighlight);
+		} else if((startLine == enterLine && startChar < enterChar) || (startLine < enterLine && endLine > enterLine)) {
+			let changedHighlight: Highlight = {
+				start: {line: startLine, character: startChar},
+				end: {line: endLine + 1, character: endChar},
+			};
+			highlights.splice(i, 1, changedHighlight);
+		} else if(endLine == enterLine && endChar >=  enterChar) {
+			let changedHighlight: Highlight = {
+				start: {line: startLine, character: startChar},
+				end: {line: endLine + 1, character: endChar - enterChar},
+			};
+			highlights.splice(i, 1, changedHighlight);
+		}
+		
+	}
+}
+
 // Given highlights
 let highlights: Highlight[] = [];
 
@@ -243,14 +274,8 @@ export function activate(context: vscode.ExtensionContext) {
 					const addedLines = addedTextLines.length - 1;
 					// 最後の行の長さは、addedTextLinesの最後の要素の長さになる
 					const lastLineLength = addedTextLines[addedTextLines.length - 1].length;
-
 					const endLine = start.line + addedLines;
 					const endChar = addedLines > 0 ? lastLineLength : start.character + lastLineLength;
-
-					console.log(start.line);
-					console.log(start.character);
-					console.log(endLine);
-					console.log(endChar);
 
 					createHighlight(highlights, start.line,start.character,endLine,endChar);
 					console.log("これっっっ",highlights);
@@ -284,8 +309,12 @@ export function activate(context: vscode.ExtensionContext) {
 					// });
 
 				} else if(changes[0].text.length != 0) {
-					editHighlight(highlights, change.range.start.line, change.range.start.character);
-					console.log("うわあああああ",highlights);
+					if(changes[0].text=="\n"){
+						pressEnterKey(highlights, change.range.start.line, change.range.start.character);
+					} else {
+						editHighlight(highlights, change.range.start.line, change.range.start.character);
+						console.log("うわあああああ",highlights);
+					}
 				}
 			}
 			// デコレーションをエディタに適用します
