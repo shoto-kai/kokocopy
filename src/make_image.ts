@@ -2,7 +2,7 @@ import { createCanvas, loadImage } from 'canvas';
 import * as fs from 'fs';
 
 export async function generateCopyAmountImage() {
-  // kokocopy.log からデータを読み込む
+    // ログファイルからコピー数とタイプ数を取得
   const [copy_num, type_num] = fs
     .readFileSync('kokocopy.log', 'utf8')
     .split(' ')

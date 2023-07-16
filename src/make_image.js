@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateCopyAmountImage = void 0;
 var canvas_1 = require("canvas");
 var fs = require("fs");
 function generateCopyAmountImage() {
@@ -175,4 +176,5 @@ function generateCopyAmountImage() {
         });
     });
 }
+exports.generateCopyAmountImage = generateCopyAmountImage;
 generateCopyAmountImage();
