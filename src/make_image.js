@@ -38,128 +38,131 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var canvas_1 = require("canvas");
 var fs = require("fs");
-// kokocopy.log からデータを読み込む
-var _a = fs
-    .readFileSync('kokocopy.log', 'utf8')
-    .split(' ')
-    .map(Number), copy_num = _a[0], type_num = _a[1];
-var copy_rate = (copy_num / (copy_num + type_num)) * 100;
-console.log("\u30B3\u30D4\u30FC\u7387: ".concat(copy_rate.toFixed(2), "%"));
-// アイコンのサイズと外枠のサイズを設定
-var icon_width = 100;
-var icon_height = 100;
-var frame_radius = 10;
-var frame_thickness = 1;
-var padding_height = 3;
-var padding_width = 40;
-// タイトルの設定
-var title_text = 'Typing';
-var title_font_size = 20;
-var title_color = '#ffffff';
-// アイコンの設定
-var icon_path = '';
-if (type_num < 1000) {
-    icon_path = 'input_images/beginner.png';
-}
-else if (type_num < 10000) {
-    icon_path = 'input_images/intermediate.png';
-}
-else if (type_num < 100000) {
-    icon_path = 'input_images/advanced.png';
-}
-else {
-    icon_path = 'input_images/expert.png';
-}
-// ディスクリプションの設定
-var description_text = '';
-if (type_num < 1000) {
-    description_text = 'Beginner';
-}
-else if (type_num < 10000) {
-    description_text = 'Intermediate';
-}
-else if (type_num < 100000) {
-    description_text = 'Advanced';
-}
-else {
-    description_text = 'Expert';
-}
-var description_font_size = 12;
-var description_color = '#ffffff';
-// ポイントの設定
-var point_text = "".concat(type_num, "pt");
-var point_font_size = 10;
-var point_color = '#ffffff';
-// ゲージバーの設定
-var gauge_width = 100;
-var gauge_height = 10;
-var gauge_fill_color = '#00ff00';
-var gauge_fill_percentage = 0;
-if (type_num < 1000) {
-    gauge_fill_percentage = type_num / 1000 * 100;
-}
-else if (type_num < 10000) {
-    gauge_fill_percentage = type_num / 10000 * 100;
-}
-else if (type_num < 100000) {
-    gauge_fill_percentage = type_num / 100000 * 100;
-}
-else {
-    gauge_fill_percentage = 100;
-}
-// 外枠となる長方形のサイズを計算
-var frame_width = icon_width + 2 * padding_width;
-var frame_height = frame_width;
-// Canvasを作成
-var canvas = (0, canvas_1.createCanvas)(frame_width, frame_height);
-var context = canvas.getContext('2d');
-// 外枠を描画
-context.fillStyle = '#000000';
-context.lineWidth = frame_thickness;
-roundRect(context, 0, 0, frame_width, frame_height, frame_radius);
-context.fill();
-context.stroke();
-// タイトルを描画
-context.font = "".concat(title_font_size, "px Arial Bold");
-context.fillStyle = title_color;
-context.textAlign = 'center';
-context.fillText(title_text, frame_width / 2, padding_height + title_font_size);
-// ディスクリプションを描画
-context.font = "".concat(description_font_size, "px Arial");
-context.fillStyle = description_color;
-context.textAlign = 'center';
-context.fillText(description_text, frame_width / 2, padding_height + title_font_size + padding_height + icon_height + padding_height + description_font_size);
-// ポイントを描画
-context.font = "".concat(point_font_size, "px Arial");
-context.fillStyle = point_color;
-context.textAlign = 'center';
-context.fillText(point_text, frame_width / 2, padding_height + title_font_size + padding_height + icon_height + padding_height + description_font_size + padding_height + point_font_size);
-// ゲージバーを描画
-var gauge_position = {
-    x: padding_width,
-    y: padding_height +
-        title_font_size +
-        padding_height +
-        icon_height +
-        padding_height +
-        description_font_size +
-        padding_height +
-        point_font_size +
-        padding_height
-};
-// ゲージバーの塗りつぶし
-var gauge_fill_width = (gauge_width * gauge_fill_percentage) / 100;
-context.fillStyle = gauge_fill_color;
-context.fillRect(gauge_position.x, gauge_position.y, gauge_fill_width, gauge_height);
-// アイコンを読み込み
-function load_Image() {
+function generateCopyAmountImage() {
     return __awaiter(this, void 0, void 0, function () {
-        var icon, out, stream;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, canvas_1.loadImage)(icon_path)];
+        // roundRectメソッドを定義
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+        var _a, copy_num, type_num, copy_rate, icon_width, icon_height, frame_radius, frame_thickness, padding_height, padding_width, title_text, title_font_size, title_color, icon_path, description_text, description_font_size, description_color, point_text, point_font_size, point_color, gauge_width, gauge_height, gauge_fill_color, gauge_fill_percentage, frame_width, frame_height, canvas, context, gauge_position, gauge_fill_width, icon, out, stream;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = fs
+                        .readFileSync('kokocopy.log', 'utf8')
+                        .split(' ')
+                        .map(Number), copy_num = _a[0], type_num = _a[1];
+                    copy_rate = (copy_num / (copy_num + type_num)) * 100;
+                    console.log("\u30B3\u30D4\u30FC\u7387: ".concat(copy_rate.toFixed(2), "%"));
+                    icon_width = 100;
+                    icon_height = 100;
+                    frame_radius = 10;
+                    frame_thickness = 1;
+                    padding_height = 3;
+                    padding_width = 40;
+                    title_text = 'Typing';
+                    title_font_size = 20;
+                    title_color = '#ffffff';
+                    icon_path = '';
+                    if (type_num < 1000) {
+                        icon_path = 'input_images/beginner.png';
+                    }
+                    else if (type_num < 10000) {
+                        icon_path = 'input_images/intermediate.png';
+                    }
+                    else if (type_num < 100000) {
+                        icon_path = 'input_images/advanced.png';
+                    }
+                    else {
+                        icon_path = 'input_images/expert.png';
+                    }
+                    description_text = '';
+                    if (type_num < 1000) {
+                        description_text = 'Beginner';
+                    }
+                    else if (type_num < 10000) {
+                        description_text = 'Intermediate';
+                    }
+                    else if (type_num < 100000) {
+                        description_text = 'Advanced';
+                    }
+                    else {
+                        description_text = 'Expert';
+                    }
+                    description_font_size = 12;
+                    description_color = '#ffffff';
+                    point_text = "".concat(type_num, "pt");
+                    point_font_size = 10;
+                    point_color = '#ffffff';
+                    gauge_width = 100;
+                    gauge_height = 10;
+                    gauge_fill_color = '#00ff00';
+                    gauge_fill_percentage = 0;
+                    if (type_num < 1000) {
+                        gauge_fill_percentage = (type_num / 1000) * 100;
+                    }
+                    else if (type_num < 10000) {
+                        gauge_fill_percentage = (type_num / 10000) * 100;
+                    }
+                    else if (type_num < 100000) {
+                        gauge_fill_percentage = (type_num / 100000) * 100;
+                    }
+                    else {
+                        gauge_fill_percentage = 100;
+                    }
+                    frame_width = icon_width + 2 * padding_width;
+                    frame_height = frame_width;
+                    canvas = (0, canvas_1.createCanvas)(frame_width, frame_height);
+                    context = canvas.getContext('2d');
+                    // 外枠を描画
+                    context.fillStyle = '#000000';
+                    context.lineWidth = frame_thickness;
+                    roundRect(context, 0, 0, frame_width, frame_height, frame_radius);
+                    context.fill();
+                    context.stroke();
+                    // タイトルを描画
+                    context.font = "".concat(title_font_size, "px Arial Bold");
+                    context.fillStyle = title_color;
+                    context.textAlign = 'center';
+                    context.fillText(title_text, frame_width / 2, padding_height + title_font_size);
+                    // ディスクリプションを描画
+                    context.font = "".concat(description_font_size, "px Arial");
+                    context.fillStyle = description_color;
+                    context.textAlign = 'center';
+                    context.fillText(description_text, frame_width / 2, padding_height + title_font_size + padding_height + icon_height + padding_height + description_font_size);
+                    // ポイントを描画
+                    context.font = "".concat(point_font_size, "px Arial");
+                    context.fillStyle = point_color;
+                    context.textAlign = 'center';
+                    context.fillText(point_text, frame_width / 2, padding_height + title_font_size + padding_height + icon_height + padding_height + description_font_size + padding_height + point_font_size);
+                    gauge_position = {
+                        x: padding_width,
+                        y: padding_height +
+                            title_font_size +
+                            padding_height +
+                            icon_height +
+                            padding_height +
+                            description_font_size +
+                            padding_height +
+                            point_font_size +
+                            padding_height
+                    };
+                    gauge_fill_width = (gauge_width * gauge_fill_percentage) / 100;
+                    context.fillStyle = gauge_fill_color;
+                    context.fillRect(gauge_position.x, gauge_position.y, gauge_fill_width, gauge_height);
+                    return [4 /*yield*/, (0, canvas_1.loadImage)(icon_path)];
                 case 1:
-                    icon = _a.sent();
+                    icon = _b.sent();
                     context.drawImage(icon, padding_width, padding_height + title_font_size + padding_height, icon_width, icon_height);
                     out = fs.createWriteStream('output_images/copy_amount.png');
                     stream = canvas.createPNGStream();
@@ -172,18 +175,4 @@ function load_Image() {
         });
     });
 }
-load_Image();
-// roundRectメソッドを定義
-function roundRect(ctx, x, y, width, height, radius) {
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-}
+generateCopyAmountImage();
