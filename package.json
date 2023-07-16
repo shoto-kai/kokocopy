@@ -1,7 +1,7 @@
 {
-  "name": "vscode-detect-snippet",
-  "displayName": "vscode-detect_snippet",
-  "description": "Snippet Detector in VSCode.",
+  "name": "koko-copy",
+  "displayName": "koko-copy",
+  "description": "ここ、コピーです。",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.80.0"
@@ -14,13 +14,9 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "vscode-detect-snippet.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    "title": "kokoCopy"
   },
+  "icon": "./kokoCopy.png",
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
